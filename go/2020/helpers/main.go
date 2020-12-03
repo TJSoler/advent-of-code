@@ -1,4 +1,4 @@
-package main
+package helpers
 
 import (
 	"bufio"
@@ -7,23 +7,23 @@ import (
 	"strconv"
 )
 
-func main() {
-	lines := readFile("./input-1.txt")
-	for index, line := range lines {
-		for _, secondLine := range lines {
-			if line+secondLine != 2020 {
-				continue
-			}
-
-			fmt.Println("result found:")
-			fmt.Println(line * secondLine)
-			return
-		}
-		lines = append(lines[:index], lines[index:]...)
+func ReadFileToStringSlice(filePath string) (lines []string) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		fmt.Println(err)
+		return nil
 	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	return lines
 }
 
-func readFile(filePath string) (lines []int) {
+func ReadFileToIntSlice(filePath string) (lines []int) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		fmt.Println(err)
@@ -40,5 +40,6 @@ func readFile(filePath string) (lines []int) {
 		}
 		lines = append(lines, lineInt)
 	}
+
 	return lines
 }
