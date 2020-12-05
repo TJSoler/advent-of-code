@@ -10,6 +10,8 @@ import (
 	"github.com/tjsoler/advent-of-code/go/2020/helpers"
 )
 
+var lines = helpers.ReadFileToStringSlice("./2020/04/input.txt")
+
 func Register() {
 	fmt.Println("Day 04")
 	a()
@@ -19,42 +21,50 @@ func Register() {
 func a() {
 	fmt.Printf("\tPart A")
 
-	lines := helpers.ReadFileToStringSlice("./2020/04/input.txt")
-	passportEntry := ""
+	passports := getPassportsFromScan(lines)
 	validPassports := 0
 
-	for index, entry := range lines {
-		passportEntry = passportEntry + " " + entry
-		if entry == "" || index == len(lines)-1 {
-			if simpleValidation(passportEntry) {
-				validPassports++
-			}
-			passportEntry = ""
-			continue
-		}
-	}
-
-	fmt.Printf(", solution: %d\n", validPassports) // 222
-}
-
-func b() {
-	fmt.Printf("\tPart B")
-	lines := helpers.ReadFileToStringSlice("./2020/04/input.txt")
-	passportEntry := ""
-	validPassports := 0
-
-	for index, entry := range lines {
-		passportEntry = passportEntry + " " + entry
-		if entry == "" || index == len(lines)-1 {
-			if advancedValidation(passportEntry) {
-				validPassports++
-			}
-			passportEntry = ""
-			continue
+	for _, passport := range passports {
+		if simpleValidation(passport) {
+			validPassports++
 		}
 	}
 
 	fmt.Printf(", solution: %d\n", validPassports)
+}
+
+func b() {
+	fmt.Printf("\tPart B")
+
+	passports := getPassportsFromScan(lines)
+	validPassports := 0
+
+	for _, passport := range passports {
+		if advancedValidation(passport) {
+			validPassports++
+		}
+	}
+
+	fmt.Printf(", solution: %d\n", validPassports)
+}
+
+func getPassportsFromScan(lines []string) (passports []string) {
+	passportEntry := ""
+	for index, entry := range lines {
+		passportEntry = passportEntry + " " + entry
+		if index == len(lines)-1 {
+			entry = ""
+		}
+
+		passportEntry = strings.TrimSpace(passportEntry)
+		if entry == "" && passportEntry != "" {
+			passports = append(passports, passportEntry)
+			passportEntry = ""
+			continue
+		}
+	}
+
+	return passports
 }
 
 func advancedValidation(passport string) bool {
@@ -145,6 +155,7 @@ func checkHeight(value string) bool {
 	if scale == "cm" && height >= 150 && height <= 193 {
 		return true
 	}
+
 	if scale == "in" && height >= 59 && height <= 76 {
 		return true
 	}
@@ -165,6 +176,7 @@ func checkHairColour(value string) bool {
 	if between(int(hexColor[0]), 0, 255) && between(int(hexColor[1]), 0, 255) && between(int(hexColor[2]), 0, 255) {
 		return true
 	}
+
 	return false
 }
 
