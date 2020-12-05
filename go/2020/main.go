@@ -5,6 +5,7 @@ import (
 	second "github.com/tjsoler/advent-of-code/go/2020/02"
 	third "github.com/tjsoler/advent-of-code/go/2020/03"
 	fourth "github.com/tjsoler/advent-of-code/go/2020/04"
+	fifth "github.com/tjsoler/advent-of-code/go/2020/05"
 )
 
 func Register() {
@@ -12,4 +13,5 @@ func Register() {
 	second.Register()
 	third.Register()
 	fourth.Register()
+	fifth.Register()
 }
