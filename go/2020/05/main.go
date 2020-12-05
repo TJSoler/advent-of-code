@@ -13,46 +13,49 @@ func Register() {
 	b()
 }
 
+var passes = helpers.ReadFileToStringSlice("./2020/05/input.txt")
+
 func a() {
 	fmt.Printf("\tPart A")
 
-	passes := helpers.ReadFileToStringSlice("./2020/05/input.txt")
-	highestID := 0
-	for _, pass := range passes {
-		id := getBoardingPassID(pass)
-		if id > highestID {
-			highestID = id
-		}
-	}
-
-	fmt.Printf(", solution: %d\n", highestID)
+	fmt.Printf(", solution: %d\n", getHighest(passes))
 }
 
 func b() {
 	fmt.Printf("\tPart B")
-	passes := helpers.ReadFileToStringSlice("./2020/05/input.txt")
+
+	fmt.Printf(", solution: %d\n", getFirstUnused(passes))
+}
+
+func getFirstUnused(passes []string) (missing int) {
 	seen := make(map[int]struct{})
+	highest := getHighest(passes)
+
 	for _, pass := range passes {
 		seen[getBoardingPassID(pass)] = struct{}{}
 	}
 
-	highestID := 0
+	for i := 1; i < highest+1; i++ {
+		_, idSeen := seen[i]
+		_, hasOneMore := seen[i+1]
+		_, hasOneLess := seen[i-1]
+		if !idSeen && hasOneMore && hasOneLess {
+			return i
+		}
+	}
+
+	return missing
+}
+
+func getHighest(passes []string) (highestID int) {
 	for _, pass := range passes {
 		id := getBoardingPassID(pass)
 		if id > highestID {
 			highestID = id
 		}
 	}
-	missingID := 0
-	for i := 1; i < highestID; i++ {
-		_, idSeen := seen[i]
-		_, hasOneMore := seen[i+1]
-		_, hasOneLess := seen[i-1]
-		if !idSeen && hasOneMore && hasOneLess {
-			missingID = i
-		}
-	}
-	fmt.Printf(", solution: %d\n", missingID)
+
+	return highestID
 }
 
 func getBoardingPassID(boardingPass string) int {
