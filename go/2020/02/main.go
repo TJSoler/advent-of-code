@@ -2,11 +2,12 @@ package second
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/tjsoler/advent-of-code/go/2020/helpers"
 )
+
+var lines = helpers.ReadFileToStringSlice("./2020/02/input.txt")
 
 func Register() {
 	fmt.Println("Day 02")
@@ -16,62 +17,65 @@ func Register() {
 
 func a() {
 	fmt.Printf("\tPart A")
-	lines := helpers.ReadFileToStringSlice("./2020/02/input.txt")
-	acceptablePasswordsCount := 0
 
-	for _, line := range lines {
-		// separate policy from password
-		split := strings.Split(line, ":")
-		password := strings.Trim(split[1], " ")
-
-		// separate policy char from reps
-		split = strings.Split(split[0], " ")
-		letter := strings.Trim(split[1], " ")
-
-		// separate min and max reps
-		split = strings.Split(split[0], "-")
-		min, _ := strconv.Atoi(strings.Trim(split[0], " "))
-		max, _ := strconv.Atoi(strings.Trim(split[1], " "))
-
-		appearances := strings.Count(password, letter)
-
-		if appearances >= min && appearances <= max {
-			acceptablePasswordsCount++
-		}
-	}
+	acceptablePasswordsCount := getAcceptablePasswordsCount(lines, countValidator)
 
 	fmt.Printf(", solution: %d\n", acceptablePasswordsCount)
 }
 
 func b() {
 	fmt.Printf("\tPart B")
-	lines := helpers.ReadFileToStringSlice("./2020/02/input.txt")
-	acceptablePasswordsCount := 0
 
-	for _, line := range lines {
-		// separate policy from password
-		split := strings.Split(line, ":")
-		password := strings.Trim(split[1], " ")
-
-		// separate policy char from reps
-		split = strings.Split(split[0], " ")
-		letter := rune(strings.Trim(split[1], " ")[0])
-
-		// separate both positions
-		split = strings.Split(split[0], "-")
-		firstPos, _ := strconv.Atoi(strings.Trim(split[0], " "))
-		secondPos, _ := strconv.Atoi(strings.Trim(split[1], " "))
-
-		if runeAt(password, firstPos) == letter || runeAt(password, secondPos) == letter {
-			acceptablePasswordsCount++
-		}
-		if runeAt(password, firstPos) == letter && runeAt(password, secondPos) == letter {
-			acceptablePasswordsCount--
-		}
-
-	}
+	acceptablePasswordsCount := getAcceptablePasswordsCount(lines, posValidator)
 
 	fmt.Printf(", solution: %d\n", acceptablePasswordsCount)
+}
+
+type validator func(int, int, string, string) bool
+
+func countValidator(min int, max int, letter string, password string) bool {
+	appearances := strings.Count(password, letter)
+
+	if appearances >= min && appearances <= max {
+		return true
+	}
+	return false
+}
+
+func posValidator(firstPos int, secondPos int, letter string, password string) bool {
+	if secondPos > len(password) {
+		return false
+	}
+
+	if runeAt(password, firstPos) == rune(letter[0]) && runeAt(password, secondPos) == rune(letter[0]) {
+		return false
+	}
+
+	if runeAt(password, firstPos) == rune(letter[0]) || runeAt(password, secondPos) == rune(letter[0]) {
+		return true
+	}
+
+	return false
+}
+
+func getAcceptablePasswordsCount(lines []string, validatorfn validator) (acceptablePasswordsCount int) {
+	for _, line := range lines {
+		var password string
+		var letter string
+		var min, max int
+
+		_, err := fmt.Sscanf(line, "%d-%d %1s: %s", &min, &max, &letter, &password)
+		if err != nil {
+			fmt.Println("error parsing passwords with scanf")
+			return 0
+		}
+
+		if validatorfn(min, max, letter, password) {
+			acceptablePasswordsCount++
+		}
+	}
+
+	return acceptablePasswordsCount
 }
 
 func runeAt(s string, pos int) rune {
