@@ -1,7 +1,6 @@
 package fourth
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -144,54 +143,6 @@ func Test_checkHairColour(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := checkHairColour(tt.args.value); got != tt.want {
 				t.Errorf("checkHairColour() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_getPassportsFromScan(t *testing.T) {
-	type args struct {
-		lines []string
-	}
-	tests := []struct {
-		name          string
-		args          args
-		wantPassports []string
-	}{
-		{"unbroken", args{[]string{
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:183cm",
-			"",
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:62in"}}, []string{
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:183cm",
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:62in"}},
-		{"broken default", args{[]string{
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
-			"byr:1937 iyr:2017 cid:147 hgt:183cm",
-			"",
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
-			"byr:1937 iyr:2017 cid:147 hgt:62in"}}, []string{
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:183cm",
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:62in"}},
-		{"super broken", args{[]string{
-			"ecl:gry",
-			"pid:860033327",
-			"eyr:2020",
-			"hcl:#fffffd",
-			"byr:1937",
-			"iyr:2017",
-			"cid:147",
-			"hgt:183cm",
-			"",
-			"",
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
-			"byr:1937 iyr:2017 cid:147 hgt:62in"}}, []string{
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:183cm",
-			"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:62in"}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if gotPassports := getPassportsFromScan(tt.args.lines); !reflect.DeepEqual(gotPassports, tt.wantPassports) {
-				t.Errorf("getPassportsFromScan() = %v, want %v", gotPassports, tt.wantPassports)
 			}
 		})
 	}

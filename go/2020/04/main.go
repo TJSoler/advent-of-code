@@ -21,7 +21,7 @@ func Register() {
 func a() {
 	fmt.Printf("\tPart A")
 
-	passports := getPassportsFromScan(lines)
+	passports := helpers.GetGroupsSeparatedByEmptyLine(lines)
 	validPassports := 0
 
 	for _, passport := range passports {
@@ -36,7 +36,7 @@ func a() {
 func b() {
 	fmt.Printf("\tPart B")
 
-	passports := getPassportsFromScan(lines)
+	passports := helpers.GetGroupsSeparatedByEmptyLine(lines)
 	validPassports := 0
 
 	for _, passport := range passports {
@@ -46,25 +46,6 @@ func b() {
 	}
 
 	fmt.Printf(", solution: %d\n", validPassports)
-}
-
-func getPassportsFromScan(lines []string) (passports []string) {
-	passportEntry := ""
-	for index, entry := range lines {
-		passportEntry = passportEntry + " " + entry
-		if index == len(lines)-1 {
-			entry = ""
-		}
-
-		passportEntry = strings.TrimSpace(passportEntry)
-		if entry == "" && passportEntry != "" {
-			passports = append(passports, passportEntry)
-			passportEntry = ""
-			continue
-		}
-	}
-
-	return passports
 }
 
 func advancedValidation(passport string) bool {

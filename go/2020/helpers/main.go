@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func ReadFileToStringSlice(filePath string) (lines []string) {
@@ -42,4 +43,24 @@ func ReadFileToIntSlice(filePath string) (lines []int) {
 	}
 
 	return lines
+}
+
+func GetGroupsSeparatedByEmptyLine(lines []string) (groups []string) {
+	groupPiece := ""
+
+	for index, piece := range lines {
+		groupPiece = groupPiece + " " + piece
+		if index == len(lines)-1 {
+			piece = ""
+		}
+
+		groupPiece = strings.TrimSpace(groupPiece)
+		if len(piece) == 0 && len(groupPiece) > 0 {
+			groups = append(groups, groupPiece)
+			groupPiece = ""
+			continue
+		}
+	}
+
+	return groups
 }
